@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "163352608264",
+    "project_id": "chatapp-c7fec",
+    "storage_bucket": "chatapp-c7fec.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:163352608264:android:931ad808aa73567f3b5bbd",
+        "android_client_info": {
+          "package_name": "com.codeforegypt.chat_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "163352608264-ases3a6n5nghvbp9as1s00a422iusmn0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.codeforegypt.chat_app",
+            "certificate_hash": "a3abacc3cd22cb55518f90d73a578be452cd3b02"
+          }
+        },
+        {
+          "client_id": "163352608264-baeb7p6qe6lja5iclgdiiccopikp3o8r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA1EVVpLx-Um-oGqqynMcxMeJ-nPA-Zq-A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "163352608264-baeb7p6qe6lja5iclgdiiccopikp3o8r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
