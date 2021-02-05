@@ -11,7 +11,8 @@ import 'imagePreviewPage.dart';
 
 class ChatPage extends StatefulWidget {
   final String chatRoomID;
-  ChatPage(this.chatRoomID);
+  final bool isGroup;
+  ChatPage(this.chatRoomID, this.isGroup);
 
   @override
   State<StatefulWidget> createState() => ChatPageState();
@@ -48,14 +49,21 @@ class ChatPageState extends State<ChatPage> {
         "sendBy": SharedTexts.userName,
         "message": messageController.text,
         "messageType": "text",
-        'time': DateTime.now().millisecondsSinceEpoch,
+        'time': DateTime.now(),
       };
 
-      firebaseInstance
-          .collection("ChatRooms")
-          .doc(widget.chatRoomID)
-          .collection("Chats")
-          .add(chatMessageMap);
+      if (widget.isGroup)
+        firebaseInstance
+            .collection("GroupRooms")
+            .doc(widget.chatRoomID)
+            .collection("Chats")
+            .add(chatMessageMap);
+      else
+        firebaseInstance
+            .collection("ChatRooms")
+            .doc(widget.chatRoomID)
+            .collection("Chats")
+            .add(chatMessageMap);
 
       setState(() {
         messageController.text = "";
@@ -67,14 +75,15 @@ class ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Chat Page'),
+        title: Text(widget.chatRoomID),
         actions: [
-          IconButton(
-              icon: Icon(Icons.call),
-              onPressed: () {
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (_) => AudioPage()));
-              })
+          if (!widget.isGroup)
+            IconButton(
+                icon: Icon(Icons.call),
+                onPressed: () {
+                  Navigator.push(
+                      context, MaterialPageRoute(builder: (_) => AudioPage()));
+                })
         ],
       ),
       body: Container(
@@ -114,19 +123,26 @@ class ChatPageState extends State<ChatPage> {
 
   Widget chatMessages() {
     return StreamBuilder(
-      stream: firebaseInstance
-          .collection("ChatRooms")
-          .doc(widget.chatRoomID)
-          .collection("Chats")
-          .orderBy('time')
-          .snapshots(),
+      stream: widget.isGroup
+          ? firebaseInstance
+              .collection("GroupRooms")
+              .doc(widget.chatRoomID)
+              .collection("Chats")
+              .orderBy('time')
+              .snapshots()
+          : firebaseInstance
+              .collection("ChatRooms")
+              .doc(widget.chatRoomID)
+              .collection("Chats")
+              .orderBy('time')
+              .snapshots(),
       builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasError) return new Text('Error: ${snapshot.error}');
 
         switch (snapshot.connectionState) {
-          // case ConnectionState.waiting:
-          //   return Center(child: CircularProgressIndicator());
-          //   break;
+          case ConnectionState.waiting:
+            return Center();
+            break;
           default:
             return ListView.builder(
               itemBuilder: (context, index) {
@@ -142,6 +158,7 @@ class ChatPageState extends State<ChatPage> {
                   child: buildMessageRow(message,
                       current: isMyMessage,
                       imageUrl: msgType == 'text' ? '' : message,
+                      sentBy: snapshot.data.docs[index].data()['sendBy'],
                       messageType: msgType),
                 );
               },
@@ -153,7 +170,7 @@ class ChatPageState extends State<ChatPage> {
   }
 
   Row buildMessageRow(String message,
-      {bool current, String messageType, String imageUrl}) {
+      {bool current, String messageType, String imageUrl, String sentBy}) {
     Size size = MediaQuery.of(context).size;
 
     return Row(
@@ -181,7 +198,7 @@ class ChatPageState extends State<ChatPage> {
                     maxWidth: size.width * 0.5,
                     minWidth: size.width * 0.1),
                 decoration: BoxDecoration(
-                  color: current ? Colors.blue[100] : Colors.red,
+                  color: current ? Colors.blue[100] : Colors.red[300],
                   borderRadius: current
                       ? BorderRadius.only(
                           topLeft: Radius.circular(20),
@@ -204,7 +221,18 @@ class ChatPageState extends State<ChatPage> {
                       Padding(
                         padding: EdgeInsets.only(right: 10),
                         child: messageType == 'text'
-                            ? Text(message)
+                            ? Column(
+                                children: [
+                                  if (!current && widget.isGroup)
+                                    Text(sentBy,
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold)),
+                                  if (!current && widget.isGroup)
+                                    SizedBox(height: 10.0),
+                                  Text(message),
+                                ],
+                              )
                             : InkWell(
                                 onTap: () {
                                   Navigator.push(
@@ -219,7 +247,7 @@ class ChatPageState extends State<ChatPage> {
                                         imageUrl: imageUrl,
                                         context: context,
                                         isCurrent: current,
-                                        height: size.height * 0.2,
+                                        height: size.width * 0.5,
                                         width: size.width * 0.5),
                               ),
                       ),

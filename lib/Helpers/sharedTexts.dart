@@ -1,8 +1,13 @@
+import 'package:flutter_contact/contacts.dart';
+
 class SharedTexts {
   static String userName;
   static String email;
   static String phoneNumber;
   static String password;
+
+  static List<Contact> listContacts = [];
+  static List<String> groupList = [];
 
   static String channedName = 'chatapp';
   static String appID = '299c792204464788abb8475148db1203';
