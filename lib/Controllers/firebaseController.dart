@@ -33,39 +33,6 @@ class FirebaseController extends ChangeNotifier {
   Map formData;
   Map get getFormData => formData;
 
-  // Future signInWithEmailAndPassword(String email, String password) async {
-  //   try {
-  //     final result = await _auth.signInWithEmailAndPassword(
-  //         email: email, password: password);
-  //     User user = result.user;
-  //     return user != null ? UserModel(uid: user.uid) : null;
-  //   } catch (e) {
-  //     print(e.toString());
-  //     return null;
-  //   }
-  // }
-
-  // Future signUpWithEmailAndPassword(String email, String password) async {
-  //   try {
-  //     final result = await _auth.createUserWithEmailAndPassword(
-  //         email: email, password: password);
-  //     User user = result.user;
-  //     return user != null ? UserModel(uid: user.uid) : null;
-  //   } catch (e) {
-  //     print(e.toString());
-  //     return null;
-  //   }
-  // }
-
-  // Future signOut() async {
-  //   try {
-  //     return await _auth.signOut();
-  //   } catch (e) {
-  //     print(e.toString());
-  //     return null;
-  //   }
-  // }
-
   Future<void> verifyPhone({
     BuildContext context,
     String phoneNumber,
@@ -117,61 +84,6 @@ class FirebaseController extends ChangeNotifier {
       notifyListeners();
       // Navigator.pop(context);
     }
-  }
-
-  // Future<bool> smsOTPDialog(BuildContext context) {
-  //   return showDialog(
-  //       context: context,
-  //       barrierDismissible: false,
-  //       builder: (BuildContext context) {
-  //         return new AlertDialog(
-  //           title: Text('Enter SMS Code'),
-  //           content: Container(
-  //             // height: 85,
-  //             child: Column(children: [
-  //               TextField(
-  //                 onChanged: (value) {
-  //                   smsOTP = value;
-  //                 },
-  //               ),
-  //               (authMsg != ''
-  //                   ? Text(
-  //                       authMsg,
-  //                       style: TextStyle(color: Colors.red),
-  //                     )
-  //                   : Container())
-  //             ]),
-  //           ),
-  //           contentPadding: EdgeInsets.all(10),
-  //           actions: <Widget>[
-  //             FlatButton(
-  //               child: Text('Done'),
-  //               onPressed: () {
-  //                 user = _auth.currentUser;
-
-  //                 if (user != null) {
-  //                   Navigator.of(context).pop();
-  //                   // Navigator.of(context).pushReplacementNamed('/homepage');
-  //                 } else {
-  //                   signIn(context);
-  //                 }
-  //               },
-  //             )
-  //           ],
-  //         );
-  //       });
-  // }
-
-  checkUser(BuildContext context) async {
-    // user = _auth.currentUser;
-
-    // if (user != null) {
-    //   // Navigator.of(context).pop();
-    //   Navigator.pushReplacement(
-    //       context, MaterialPageRoute(builder: (_) => ChatListHomePage()));
-    // } else {
-    signIn(context);
-    // }
   }
 
   signIn(BuildContext context) async {

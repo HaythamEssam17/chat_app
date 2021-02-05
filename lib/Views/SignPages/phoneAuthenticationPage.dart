@@ -62,7 +62,7 @@ class _PhoneAuthenticationPageState extends State<PhoneAuthenticationPage> {
                   onPressed: () {
                     setState(() {
                       authProvider.formData = widget.formData;
-                      authProvider.checkUser(context);
+                      authProvider.signIn(context);
                     });
                   },
                   text: 'Verify Code',

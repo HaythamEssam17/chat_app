@@ -1,7 +1,13 @@
+import 'dart:io';
+
 import 'package:chat_app/Helpers/sharedTexts.dart';
 import 'package:chat_app/Views/AgoraPages/audioPage.dart';
+import 'package:chat_app/Widgets/customCachedImage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+
+import 'imagePreviewPage.dart';
 
 class ChatPage extends StatefulWidget {
   final String chatRoomID;
@@ -15,11 +21,33 @@ class ChatPageState extends State<ChatPage> {
   FirebaseFirestore firebaseInstance = FirebaseFirestore.instance;
   TextEditingController messageController = TextEditingController();
 
-  addNewMessage() {
+  File _image;
+  final picker = ImagePicker();
+  String errorMsg = '';
+
+  Future getImage() async {
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+
+    setState(() {
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (_) => ImagePreviewPage(
+                    image: _image, chatRoomID: widget.chatRoomID)));
+      } else {
+        errorMsg = 'No images selected';
+      }
+    });
+  }
+
+  addTextMessage() {
     if (messageController.text.isNotEmpty) {
       Map<String, dynamic> chatMessageMap = {
         "sendBy": SharedTexts.userName,
         "message": messageController.text,
+        "messageType": "text",
         'time': DateTime.now().millisecondsSinceEpoch,
       };
 
@@ -57,6 +85,12 @@ class ChatPageState extends State<ChatPage> {
               padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
               child: Row(
                 children: [
+                  IconButton(
+                      icon: Icon(Icons.image),
+                      onPressed: () async {
+                        getImage();
+                      }),
+                  SizedBox(width: 20.0),
                   Expanded(
                     child: TextField(
                       controller: messageController,
@@ -66,8 +100,9 @@ class ChatPageState extends State<ChatPage> {
                   IconButton(
                       icon: Icon(Icons.send),
                       onPressed: () {
-                        addNewMessage();
-                      })
+                        if (messageController.text.trim().isNotEmpty)
+                          addTextMessage();
+                      }),
                 ],
               ),
             ),
@@ -89,9 +124,9 @@ class ChatPageState extends State<ChatPage> {
         if (snapshot.hasError) return new Text('Error: ${snapshot.error}');
 
         switch (snapshot.connectionState) {
-          case ConnectionState.waiting:
-            return Center(child: CircularProgressIndicator());
-            break;
+          // case ConnectionState.waiting:
+          //   return Center(child: CircularProgressIndicator());
+          //   break;
           default:
             return ListView.builder(
               itemBuilder: (context, index) {
@@ -99,10 +134,15 @@ class ChatPageState extends State<ChatPage> {
                         SharedTexts.userName ??
                     false;
                 String message = snapshot.data.docs[index].data()['message'];
+                String msgType =
+                    snapshot.data.docs[index].data()['messageType'];
 
                 return Padding(
                   padding: EdgeInsets.all(10.0),
-                  child: buildMessageRow(message, current: isMyMessage),
+                  child: buildMessageRow(message,
+                      current: isMyMessage,
+                      imageUrl: msgType == 'text' ? '' : message,
+                      messageType: msgType),
                 );
               },
               itemCount: snapshot.data.docs.length,
@@ -112,24 +152,8 @@ class ChatPageState extends State<ChatPage> {
     );
   }
 
-  Widget messageBox(String sendBy, String message) {
-    bool isMyMessage = sendBy == SharedTexts.userName ?? false;
-
-    return Container(
-      height: 100.0,
-      width: 100.0,
-      decoration: BoxDecoration(
-          color: Colors.red,
-          borderRadius: BorderRadius.only(
-            bottomLeft:
-                isMyMessage ? Radius.circular(100.0) : Radius.circular(0.0),
-            bottomRight:
-                isMyMessage ? Radius.circular(0.0) : Radius.circular(100.0),
-          )),
-    );
-  }
-
-  Row buildMessageRow(String message, {bool current}) {
+  Row buildMessageRow(String message,
+      {bool current, String messageType, String imageUrl}) {
     Size size = MediaQuery.of(context).size;
 
     return Row(
@@ -179,7 +203,25 @@ class ChatPageState extends State<ChatPage> {
                     children: <Widget>[
                       Padding(
                         padding: EdgeInsets.only(right: 10),
-                        child: Text(message),
+                        child: messageType == 'text'
+                            ? Text(message)
+                            : InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (_) => ImagePreviewPage(
+                                              image: _image,
+                                              chatRoomID: null)));
+                                },
+                                child:
+                                    CustomCachedImage.cachedImageWithoutRadius(
+                                        imageUrl: imageUrl,
+                                        context: context,
+                                        isCurrent: current,
+                                        height: size.height * 0.2,
+                                        width: size.width * 0.5),
+                              ),
                       ),
                       Icon(Icons.done_all, color: Colors.white)
                     ],
