@@ -39,7 +39,7 @@ class ContactsHomePageState extends State<ContactsHomePage> {
     setState(() {
       isContactsLoaded = false;
       // groupList.clear();
-      SharedTexts.groupList.clear();
+      SharedTexts.groupList.length = 0;
     });
 
     final PermissionStatus permissionStatus = await _getPermission();
