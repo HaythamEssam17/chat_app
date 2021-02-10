@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:chat_app/Helpers/sharedTexts.dart';
-import 'package:chat_app/Views/ChatPages/chatListHomePage.dart';
 import 'package:chat_app/Views/ChatPages/chatTabBarPage.dart';
 import 'package:chat_app/Views/SignPages/loginPage.dart';
 import 'package:flutter/material.dart';

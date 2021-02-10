@@ -12,7 +12,7 @@ import 'imagePreviewPage.dart';
 class ChatPage extends StatefulWidget {
   final String chatRoomID;
   final bool isGroup;
-  ChatPage(this.chatRoomID, this.isGroup);
+  ChatPage({this.chatRoomID, this.isGroup});
 
   @override
   State<StatefulWidget> createState() => ChatPageState();
@@ -43,7 +43,28 @@ class ChatPageState extends State<ChatPage> {
     });
   }
 
+  addChatRoom() {
+    List<String> users = [SharedTexts.userName, widget.chatRoomID];
+    Map<String, dynamic> chatRoom = {
+      "ChatUsers": users,
+      "CreatedBy": SharedTexts.userName,
+      "chatRoomID": widget.chatRoomID,
+      "chatTime": DateTime.now()
+    };
+
+    firebaseInstance
+        .collection("ChatRooms")
+        .doc(widget.chatRoomID)
+        .set(chatRoom)
+        .catchError((e) {
+      print(e);
+    });
+  }
+
   addTextMessage() {
+    // If No Messages Sent It WillNot Create A ChatRoom
+    addChatRoom();
+
     if (messageController.text.isNotEmpty) {
       Map<String, dynamic> chatMessageMap = {
         "sendBy": SharedTexts.userName,

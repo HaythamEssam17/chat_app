@@ -1,10 +1,8 @@
-import 'package:chat_app/Widgets/commonDraggableBottomSheetwidget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import 'chatPage.dart';
-import 'contactsHomePage.dart';
 
 class ChatListHomePage extends StatefulWidget {
   final bool isToGroup;
@@ -137,8 +135,9 @@ class _ChatListHomePageState extends State<ChatListHomePage>
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (_) =>
-                                  ChatPage(text, widget.isToGroup)));
+                              builder: (_) => ChatPage(
+                                  chatRoomID: text,
+                                  isGroup: widget.isToGroup)));
                     },
                     title: Text(text),
                     trailing: Text(format.toString()),

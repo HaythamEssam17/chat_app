@@ -46,7 +46,6 @@ dependencies:
   modal_bottom_sheet: ^1.0.0+1
   # Device
   permission_handler: ^5.0.1+1
-  device_apps: ^1.2.0
   flutter_contact: ^0.6.1
   image_picker: ^0.6.7+22
   photo_view: ^0.10.3

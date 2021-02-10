@@ -174,8 +174,17 @@ class ContactsHomePageState extends State<ContactsHomePage> {
                                 });
                               })
                             : customChatButton('chat', () {
-                                addChatRoom(SharedTexts
-                                    .listContacts[index].displayName);
+                                // addChatRoom(SharedTexts
+                                //     .listContacts[index].displayName);
+
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ChatPage(
+                                            chatRoomID: SharedTexts
+                                                .listContacts[index]
+                                                .displayName,
+                                            isGroup: false)));
                               }),
                       ],
                     ),
@@ -231,25 +240,28 @@ class ContactsHomePageState extends State<ContactsHomePage> {
   }
 
   addChatRoom(String chatRoomID) {
-    setState(() {
-      List<String> users = [SharedTexts.userName, chatRoomID];
-      Map<String, dynamic> chatRoom = {
-        "ChatUsers": users,
-        "chatRoomID": chatRoomID,
-        "chatTime": DateTime.now()
-      };
+    // setState(() {
+    // List<String> users = [SharedTexts.userName, chatRoomID];
+    // Map<String, dynamic> chatRoom = {
+    //   "ChatUsers": users,
+    //   "chatRoomID": chatRoomID,
+    //   "chatTime": DateTime.now()
+    // };
+    //
+    // firebaseInstance
+    //     .collection("ChatRooms")
+    //     .doc(chatRoomID)
+    //     .set(chatRoom)
+    //     .catchError((e) {
+    //   print(e);
+    // });
 
-      firebaseInstance
-          .collection("ChatRooms")
-          .doc(chatRoomID)
-          .set(chatRoom)
-          .catchError((e) {
-        print(e);
-      });
-
-      Navigator.push(context,
-          MaterialPageRoute(builder: (context) => ChatPage(chatRoomID, false)));
-    });
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                ChatPage(chatRoomID: chatRoomID, isGroup: false)));
+    // });
   }
 
   Future addNewGroup() async {
@@ -271,7 +283,8 @@ class ContactsHomePageState extends State<ContactsHomePage> {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => ChatPage(groupIDController.text, true)));
+              builder: (context) =>
+                  ChatPage(chatRoomID: groupIDController.text, isGroup: true)));
     });
   }
 }
