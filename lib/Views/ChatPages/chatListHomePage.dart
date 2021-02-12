@@ -13,91 +13,20 @@ class ChatListHomePage extends StatefulWidget {
 
 class _ChatListHomePageState extends State<ChatListHomePage>
     with SingleTickerProviderStateMixin {
-  // AnimationController _controller;
-  // Duration _duration = Duration(milliseconds: 500);
-  // Tween<Offset> _tween = Tween(begin: Offset(0, 1), end: Offset(0, 0));
   FirebaseFirestore firebaseInstance = FirebaseFirestore.instance;
-
-  // bool isToGroup = false;
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _controller = AnimationController(vsync: this, duration: _duration);
-  // }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text('Chat List'),
-      //   automaticallyImplyLeading: false,
-      //   actions: [
-      //     FlatButton(
-      //         onPressed: () {
-      //           setState(() {
-      //             isToGroup = true;
-      //             _controller.reverse();
-      //             _controller.forward();
-      //           });
-      //         },
-      //         child: Text('Add Group')),
-      //   ],
-      // ),
-      body: Container(
-        height: size.height,
-        width: size.width,
-        color: Colors.white,
-        child: Stack(
-          children: [
-            chatList(),
-            // SizedBox.expand(
-            //   child: SlideTransition(
-            //     position: _tween.animate(_controller),
-            //     child: CommonDraggableBottomSheetwidget
-            //         .customDraggableBottomSheet([
-            //       Container(
-            //         color: Colors.white,
-            //         child: Row(
-            //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //           children: [
-            //             Text('Contacts List',
-            //                 style: TextStyle(
-            //                     fontSize: 20.0, fontWeight: FontWeight.bold)),
-            //             FlatButton(
-            //                 onPressed: () {
-            //                   _controller.reverse();
-            //                 },
-            //                 child: Icon(Icons.cancel))
-            //           ],
-            //         ),
-            //       ),
-            //       Divider(),
-            //       Container(
-            //         height: size.height * 0.8,
-            //         child: ContactsHomePage(
-            //           isToAddGroup: isToGroup,
-            //         ),
-            //       )
-            //     ]),
-            //   ),
-            // ),
-          ],
-        ),
-      ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     setState(() {
-      //       isToGroup = false;
-      //       // _controller.reverse();
-      //       _controller.forward();
-      //     });
-      //   },
-      //   child: Icon(Icons.contacts),
-      // ),
-    );
+        body: Container(
+            height: size.height,
+            width: size.width,
+            color: Colors.white,
+            child: Stack(children: [
+              chatList(),
+            ])));
   }
 
   Widget chatList() {

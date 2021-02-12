@@ -20,7 +20,6 @@ class ContactsHomePageState extends State<ContactsHomePage> {
   TextEditingController groupIDController;
   final firebaseInstance = FirebaseFirestore.instance;
   bool isContactsLoaded = false;
-  // List<String> groupList = [];
 
   Future<PermissionStatus> _getPermission() async {
     final PermissionStatus permission = await Permission.contacts.status;
@@ -61,9 +60,9 @@ class ContactsHomePageState extends State<ContactsHomePage> {
   @override
   void initState() {
     super.initState();
-    groupIDController = new TextEditingController();
-
     readContacts();
+
+    groupIDController = new TextEditingController();
   }
 
   @override
@@ -84,6 +83,7 @@ class ContactsHomePageState extends State<ContactsHomePage> {
 
   Widget customContactsListView() {
     final width = MediaQuery.of(context).size.width;
+
     return Column(
       children: [
         if (SharedTexts.groupList.length != 0)
@@ -174,9 +174,6 @@ class ContactsHomePageState extends State<ContactsHomePage> {
                                 });
                               })
                             : customChatButton('chat', () {
-                                // addChatRoom(SharedTexts
-                                //     .listContacts[index].displayName);
-
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -239,35 +236,37 @@ class ContactsHomePageState extends State<ContactsHomePage> {
     );
   }
 
-  addChatRoom(String chatRoomID) {
-    // setState(() {
-    // List<String> users = [SharedTexts.userName, chatRoomID];
-    // Map<String, dynamic> chatRoom = {
-    //   "ChatUsers": users,
-    //   "chatRoomID": chatRoomID,
-    //   "chatTime": DateTime.now()
-    // };
-    //
-    // firebaseInstance
-    //     .collection("ChatRooms")
-    //     .doc(chatRoomID)
-    //     .set(chatRoom)
-    //     .catchError((e) {
-    //   print(e);
-    // });
+  // addChatRoom(String chatRoomID) {
+  //   setState(() {
+  //     List<String> users = [SharedTexts.userName, chatRoomID];
+  //     Map<String, dynamic> chatRoom = {
+  //       "chatUsers": users,
+  //       "creatorPhone": SharedTexts.phoneNumber,
+  //       "chatRoomID": chatRoomID,
+  //       "chatTime": DateTime.now()
+  //     };
 
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                ChatPage(chatRoomID: chatRoomID, isGroup: false)));
-    // });
-  }
+  //     firebaseInstance
+  //         .collection("ChatRooms")
+  //         .doc(chatRoomID)
+  //         .set(chatRoom)
+  //         .catchError((e) {
+  //       print(e);
+  //     });
+
+  //     Navigator.push(
+  //         context,
+  //         MaterialPageRoute(
+  //             builder: (context) =>
+  //                 ChatPage(chatRoomID: chatRoomID, isGroup: false)));
+  //   });
+  // }
 
   Future addNewGroup() async {
     setState(() {
       Map<String, dynamic> groupRoom = {
         "groupUsers": SharedTexts.groupList,
+        "creatorPhone": SharedTexts.phoneNumber,
         "groupID": groupIDController.text,
         "groupTime": DateTime.now()
       };

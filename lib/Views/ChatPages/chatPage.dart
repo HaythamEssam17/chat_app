@@ -1,18 +1,22 @@
 import 'dart:io';
 
+import 'package:chat_app/Controllers/chatController.dart';
 import 'package:chat_app/Helpers/sharedTexts.dart';
 import 'package:chat_app/Views/AgoraPages/audioPage.dart';
 import 'package:chat_app/Widgets/customCachedImage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_contact/contacts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
 import 'imagePreviewPage.dart';
 
 class ChatPage extends StatefulWidget {
+  final Contact contactModel;
   final String chatRoomID;
   final bool isGroup;
-  ChatPage({this.chatRoomID, this.isGroup});
+  ChatPage({this.chatRoomID, this.isGroup, this.contactModel});
 
   @override
   State<StatefulWidget> createState() => ChatPageState();
@@ -21,6 +25,7 @@ class ChatPage extends StatefulWidget {
 class ChatPageState extends State<ChatPage> {
   FirebaseFirestore firebaseInstance = FirebaseFirestore.instance;
   TextEditingController messageController = TextEditingController();
+  CollectionReference collection;
 
   File _image;
   final picker = ImagePicker();
@@ -43,53 +48,38 @@ class ChatPageState extends State<ChatPage> {
     });
   }
 
-  addChatRoom() {
-    List<String> users = [SharedTexts.userName, widget.chatRoomID];
-    Map<String, dynamic> chatRoom = {
-      "ChatUsers": users,
-      "CreatedBy": SharedTexts.userName,
-      "chatRoomID": widget.chatRoomID,
-      "chatTime": DateTime.now()
+  addTextMessage() {
+    final chatController = Provider.of<ChatController>(context, listen: false);
+
+    if (chatController.getIsRoomFounded == false) {
+      chatController.addChatRoom(
+          context: context, chatRoomID: widget.chatRoomID);
+    }
+
+    Map<String, dynamic> chatMessageMap = {
+      "sendBy": SharedTexts.userName,
+      "message": messageController.text,
+      "messageType": "text",
+      'time': DateTime.now(),
     };
 
-    firebaseInstance
-        .collection("ChatRooms")
-        .doc(widget.chatRoomID)
-        .set(chatRoom)
-        .catchError((e) {
-      print(e);
+    collection.doc(widget.chatRoomID).collection("Chats").add(chatMessageMap);
+
+    setState(() {
+      messageController.text = '';
     });
   }
 
-  addTextMessage() {
-    // If No Messages Sent It WillNot Create A ChatRoom
-    addChatRoom();
+  @override
+  void initState() {
+    super.initState();
+    if (widget.isGroup)
+      collection = firebaseInstance.collection("ChatGroups");
+    else
+      collection = firebaseInstance.collection("ChatRooms");
 
-    if (messageController.text.isNotEmpty) {
-      Map<String, dynamic> chatMessageMap = {
-        "sendBy": SharedTexts.userName,
-        "message": messageController.text,
-        "messageType": "text",
-        'time': DateTime.now(),
-      };
-
-      if (widget.isGroup)
-        firebaseInstance
-            .collection("GroupRooms")
-            .doc(widget.chatRoomID)
-            .collection("Chats")
-            .add(chatMessageMap);
-      else
-        firebaseInstance
-            .collection("ChatRooms")
-            .doc(widget.chatRoomID)
-            .collection("Chats")
-            .add(chatMessageMap);
-
-      setState(() {
-        messageController.text = "";
-      });
-    }
+    Provider.of<ChatController>(context, listen: false)
+        .checkIfRoomCreatedBefore(widget.chatRoomID);
   }
 
   @override

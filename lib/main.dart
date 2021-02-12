@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'Controllers/chatController.dart';
 import 'Controllers/firebaseController.dart';
 import 'Controllers/userController.dart';
 
@@ -25,6 +26,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => UserController()),
         ChangeNotifierProvider(create: (_) => FirebaseController()),
+        ChangeNotifierProvider(create: (_) => ChatController()),
       ],
       child: MaterialApp(
         title: 'Chat App',
